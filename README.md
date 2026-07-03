@@ -20,6 +20,27 @@ Performance of Image Processing Tasks."*
 
 ---
 
+## Try it in your browser
+
+The `web/` folder contains **pixelbench-web** — the same race, zero install:
+the CPU pass runs plain TypeScript on typed arrays, the GPU pass runs
+**WebGPU compute shaders (WGSL)**, and every GPU result is verified
+pixel-for-pixel against the CPU output before it counts. Built with React +
+TypeScript + Vite, deploys to Netlify as a static site.
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Note the two tools answer different questions: the CLI measures *native*
+performance (OpenCV + OpenCL), the web version measures the *browser stack*
+(JS vs WebGPU). Same machine, different stories — on the laptop this was
+built on, the GPU wins 10/10 in the browser but only 18/24 natively, because
+single-threaded JavaScript is a much softer baseline than OpenCV's
+hand-optimized C++.
+
 ## Sample output
 
 ```

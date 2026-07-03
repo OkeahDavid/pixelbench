@@ -8,3 +8,5 @@ venv/
 .env
 results/*.json
 !results/sample-*.json
+node_modules/
+web/dist/
