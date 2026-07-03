@@ -1,0 +1,106 @@
+# pixelbench
+
+**Is your GPU actually faster than your CPU? Stop guessing — measure it.**
+
+pixelbench runs identical image-processing workloads (blur, threshold, edge
+detection, and more) on your CPU and your GPU, then shows you exactly where the
+GPU wins and where it embarrassingly loses. No CUDA required — it uses OpenCV's
+OpenCL backend, so it works on integrated Intel/AMD graphics, NVIDIA, and Apple
+machines alike.
+
+> **Reality check.** "GPUs are faster at image processing" is a half-truth.
+> On the laptop this tool was born on (i5-12450H + Intel UHD graphics), the GPU
+> is **4.6x faster** at bilateral filtering — and **26% slower** at a 4K
+> Gaussian blur. Whether the GPU wins depends on the task, the image size, and
+> your hardware. That's the whole point of measuring.
+
+This project grew out of my bachelor's thesis at Kharkiv National University of
+Radio Electronics: *"Computer Vision and the Effect of Hardware on the
+Performance of Image Processing Tasks."*
+
+---
+
+## Sample output
+
+```
+CPU: 12th Gen Intel(R) Core(TM) i5-12450H (12 threads)   GPU: Intel(R) UHD Graphics
+Windows 11 · Python 3.12 · OpenCV 5.0 · median of 20 runs, 5 warmup
+
+1080p
+┌──────────────────────┬──────────┬──────────┬─────────────┐
+│ Task                 │ CPU (ms) │ GPU (ms) │ GPU speedup │
+├──────────────────────┼──────────┼──────────┼─────────────┤
+│ Grayscale conversion │     0.97 │     0.58 │       1.67x │
+│ Gaussian blur 15x15  │     4.92 │     5.14 │       0.96x │
+│ Median blur 5x5      │     9.04 │     4.23 │       2.14x │
+│ Bilateral filter d=9 │    44.49 │     9.62 │       4.63x │
+│ Binary threshold     │     0.98 │     0.16 │       5.95x │
+│ Sobel edges          │     1.53 │     0.64 │       2.38x │
+│ Canny edges          │     5.06 │     1.87 │       2.71x │
+│ Resize to 50%        │     0.61 │     0.52 │       1.16x │
+└──────────────────────┴──────────┴──────────┴─────────────┘
+
+Verdict: GPU won 18/24 tasks on this machine. Faster hardware isn't
+always faster — it depends on the task and image size.
+```
+
+## Install & run
+
+```bash
+git clone https://github.com/okeahdavid/pixelbench
+cd pixelbench
+pip install -e .
+pixelbench
+```
+
+Or without installing: `pip install opencv-python numpy rich && python -m pixelbench`
+
+### Options
+
+```
+pixelbench --sizes 720p,1080p,1440p,4k   # image sizes to test
+           --tasks gaussian_blur,canny   # subset of tasks (default: all 8)
+           --iterations 50               # timed runs per op (default: 20)
+           --no-gpu                      # CPU-only pass
+           --json results/mine.json      # save machine-readable results
+           --leaderboard                 # print a row for the table below
+```
+
+## Leaderboard
+
+Run `pixelbench --leaderboard` and open a PR (or an issue) with your row —
+laptops, desktops, potatoes, and workstations all welcome. Median speedup is
+across all tasks and sizes.
+
+| CPU | GPU | OS | Median GPU speedup | Best win |
+|-----|-----|----|--------------------|----------|
+| 12th Gen Intel(R) Core(TM) i5-12450H | Intel(R) UHD Graphics | Windows | 1.90x | 5.95x (Binary threshold, 1080p) |
+
+## Methodology (the fine print that makes numbers honest)
+
+- **Same code path, two backends.** Every task calls the same OpenCV function;
+  the CPU pass gets a numpy array, the GPU pass gets a `cv2.UMat`, which routes
+  through OpenCV's transparent OpenCL API.
+- **Transfer excluded.** The test image is uploaded to the GPU *before* timing
+  starts. Numbers measure compute, not PCIe/RAM copies. (A transfer-inclusive
+  mode is on the roadmap — for one-shot processing it changes the story.)
+- **Warmup runs** precede every measurement, because OpenCL compiles kernels on
+  first use and that spike shouldn't pollute your numbers.
+- **Median, not mean.** Each iteration is timed individually and the median is
+  reported, so a background Windows update can't skew your results.
+- **`cv2.ocl.finish()` after every GPU op**, so asynchronous work can't leak
+  outside the timing window.
+- **Deterministic test image.** A synthetic photo-like image (gradients +
+  shapes + noise, fixed seed) is generated per size — every machine benchmarks
+  the exact same pixels.
+
+## Roadmap
+
+- [ ] Transfer-inclusive timing mode (`--include-transfer`)
+- [ ] CUDA backend for `opencv-contrib` builds
+- [ ] Speedup charts (`--chart`, matplotlib)
+- [ ] Hosted leaderboard with auto-submit
+
+## License
+
+MIT © Okeah David Chidugam

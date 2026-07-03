@@ -1,0 +1,211 @@
+{
+  "pixelbench": "0.1.0",
+  "timestamp": "2026-07-03T16:38:02+00:00",
+  "system": {
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450H",
+    "cores": 12,
+    "gpu": "Intel(R) UHD Graphics",
+    "gpu_vendor": "Intel(R) Corporation",
+    "gpu_type": "iGPU",
+    "opencl": true,
+    "os": "Windows 11",
+    "python": "3.12.2",
+    "opencv": "5.0.0"
+  },
+  "iterations": 20,
+  "warmup": 5,
+  "measurements": [
+    {
+      "task": "grayscale",
+      "size": "720p",
+      "cpu_ms": 0.159549992531538,
+      "gpu_ms": 0.3017000271938741,
+      "speedup": 0.529,
+      "gpu_error": null
+    },
+    {
+      "task": "gaussian_blur",
+      "size": "720p",
+      "cpu_ms": 2.4038499686867,
+      "gpu_ms": 2.58314999518916,
+      "speedup": 0.931,
+      "gpu_error": null
+    },
+    {
+      "task": "median_blur",
+      "size": "720p",
+      "cpu_ms": 4.698549979366362,
+      "gpu_ms": 2.126700012013316,
+      "speedup": 2.209,
+      "gpu_error": null
+    },
+    {
+      "task": "bilateral",
+      "size": "720p",
+      "cpu_ms": 21.264699986204505,
+      "gpu_ms": 4.847399948630482,
+      "speedup": 4.387,
+      "gpu_error": null
+    },
+    {
+      "task": "threshold",
+      "size": "720p",
+      "cpu_ms": 0.02789997961372137,
+      "gpu_ms": 0.2531500067561865,
+      "speedup": 0.11,
+      "gpu_error": null
+    },
+    {
+      "task": "sobel",
+      "size": "720p",
+      "cpu_ms": 0.6125500076450408,
+      "gpu_ms": 0.5046500009484589,
+      "speedup": 1.214,
+      "gpu_error": null
+    },
+    {
+      "task": "canny",
+      "size": "720p",
+      "cpu_ms": 2.419549971818924,
+      "gpu_ms": 1.125300070270896,
+      "speedup": 2.15,
+      "gpu_error": null
+    },
+    {
+      "task": "resize_half",
+      "size": "720p",
+      "cpu_ms": 0.1334499684162438,
+      "gpu_ms": 0.348250032402575,
+      "speedup": 0.383,
+      "gpu_error": null
+    },
+    {
+      "task": "grayscale",
+      "size": "1080p",
+      "cpu_ms": 0.9688000427559018,
+      "gpu_ms": 0.5799499922432005,
+      "speedup": 1.67,
+      "gpu_error": null
+    },
+    {
+      "task": "gaussian_blur",
+      "size": "1080p",
+      "cpu_ms": 4.923649947158992,
+      "gpu_ms": 5.144050053786486,
+      "speedup": 0.957,
+      "gpu_error": null
+    },
+    {
+      "task": "median_blur",
+      "size": "1080p",
+      "cpu_ms": 9.044000005815178,
+      "gpu_ms": 4.233250045217574,
+      "speedup": 2.136,
+      "gpu_error": null
+    },
+    {
+      "task": "bilateral",
+      "size": "1080p",
+      "cpu_ms": 44.48969999793917,
+      "gpu_ms": 9.618099953513592,
+      "speedup": 4.626,
+      "gpu_error": null
+    },
+    {
+      "task": "threshold",
+      "size": "1080p",
+      "cpu_ms": 0.9751999750733376,
+      "gpu_ms": 0.16380002489313483,
+      "speedup": 5.954,
+      "gpu_error": null
+    },
+    {
+      "task": "sobel",
+      "size": "1080p",
+      "cpu_ms": 1.5278999926522374,
+      "gpu_ms": 0.6428000051528215,
+      "speedup": 2.377,
+      "gpu_error": null
+    },
+    {
+      "task": "canny",
+      "size": "1080p",
+      "cpu_ms": 5.057049973402172,
+      "gpu_ms": 1.867149956524372,
+      "speedup": 2.708,
+      "gpu_error": null
+    },
+    {
+      "task": "resize_half",
+      "size": "1080p",
+      "cpu_ms": 0.6057000136934221,
+      "gpu_ms": 0.5215000128373504,
+      "speedup": 1.161,
+      "gpu_error": null
+    },
+    {
+      "task": "grayscale",
+      "size": "4k",
+      "cpu_ms": 2.2394999978132546,
+      "gpu_ms": 1.5566000365652144,
+      "speedup": 1.439,
+      "gpu_error": null
+    },
+    {
+      "task": "gaussian_blur",
+      "size": "4k",
+      "cpu_ms": 16.453900025226176,
+      "gpu_ms": 22.369650017935783,
+      "speedup": 0.736,
+      "gpu_error": null
+    },
+    {
+      "task": "median_blur",
+      "size": "4k",
+      "cpu_ms": 40.26059998432174,
+      "gpu_ms": 17.611550050787628,
+      "speedup": 2.286,
+      "gpu_error": null
+    },
+    {
+      "task": "bilateral",
+      "size": "4k",
+      "cpu_ms": 174.63484994368628,
+      "gpu_ms": 41.88325005816296,
+      "speedup": 4.17,
+      "gpu_error": null
+    },
+    {
+      "task": "threshold",
+      "size": "4k",
+      "cpu_ms": 2.1401000558398664,
+      "gpu_ms": 0.4423000500537455,
+      "speedup": 4.839,
+      "gpu_error": null
+    },
+    {
+      "task": "sobel",
+      "size": "4k",
+      "cpu_ms": 5.731249984819442,
+      "gpu_ms": 2.2992499289102852,
+      "speedup": 2.493,
+      "gpu_error": null
+    },
+    {
+      "task": "canny",
+      "size": "4k",
+      "cpu_ms": 8.868850010912865,
+      "gpu_ms": 7.81700003426522,
+      "speedup": 1.135,
+      "gpu_error": null
+    },
+    {
+      "task": "resize_half",
+      "size": "4k",
+      "cpu_ms": 1.9986999686807394,
+      "gpu_ms": 1.4159000129438937,
+      "speedup": 1.412,
+      "gpu_error": null
+    }
+  ]
+}
