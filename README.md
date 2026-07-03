@@ -22,11 +22,11 @@ Performance of Image Processing Tasks."*
 
 ## Try it in your browser
 
-The `web/` folder contains **pixelbench-web** — the same race, zero install:
-the CPU pass runs plain TypeScript on typed arrays, the GPU pass runs
-**WebGPU compute shaders (WGSL)**, and every GPU result is verified
-pixel-for-pixel against the CPU output before it counts. Built with React +
-TypeScript + Vite, deploys to Netlify as a static site.
+The `web/` folder contains **pixelbench-web** — the same comparison with no
+install: the CPU pass runs single-threaded TypeScript over typed arrays, the
+GPU pass runs **WebGPU compute shaders (WGSL)**, and every GPU result is
+verified against the CPU output before it is reported. Built with React +
+TypeScript + Vite; deploys to Netlify as a static site.
 
 ```bash
 cd web

@@ -1,41 +1,40 @@
 import type { Measurement } from "../bench/runner";
 
 function SpeedupCell({ m }: { m: Measurement }) {
-  if (m.gpuError) return <td className="muted">unsupported</td>;
+  if (m.gpuError) return <td className="muted">Unsupported</td>;
   if (m.speedup === null) return <td className="muted">—</td>;
-  const cls =
-    m.speedup >= 1.1 ? "speed-win" : m.speedup <= 0.9 ? "speed-lose" : "speed-tie";
-  return <td className={cls}>{m.speedup.toFixed(2)}x</td>;
+  const cls = m.speedup >= 1.1 ? "gain" : m.speedup <= 0.9 ? "loss" : "";
+  return <td className={cls}>{m.speedup.toFixed(2)}×</td>;
 }
 
 export function ResultsTable({ size, rows }: { size: string; rows: Measurement[] }) {
   return (
-    <section className="size-block">
+    <section className="results">
       <h2>{size}</h2>
       <table>
         <thead>
           <tr>
-            <th>Task</th>
-            <th>CPU (ms)</th>
-            <th>GPU (ms)</th>
+            <th>Operation</th>
+            <th>CPU</th>
+            <th>GPU</th>
             <th>Speedup</th>
-            <th>Match</th>
+            <th>Verified</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((m) => (
             <tr key={m.task}>
               <td>{m.label}</td>
-              <td>{m.cpuMs.toFixed(2)}</td>
-              <td>{m.gpuMs !== null ? m.gpuMs.toFixed(2) : "—"}</td>
+              <td>{m.cpuMs.toFixed(2)} ms</td>
+              <td>{m.gpuMs !== null ? `${m.gpuMs.toFixed(2)} ms` : "—"}</td>
               <SpeedupCell m={m} />
               <td>
                 {m.verified === null ? (
                   <span className="muted">—</span>
                 ) : m.verified ? (
-                  <span className="check">✓</span>
+                  "Yes"
                 ) : (
-                  <span className="speed-lose">✗</span>
+                  <span className="loss">No</span>
                 )}
               </td>
             </tr>

@@ -17,21 +17,21 @@ export function EnvCard({
   gpuChecked: boolean;
 }) {
   return (
-    <section className="env-card">
+    <dl className="env">
       <div className="env-item">
-        <span className="env-label">CPU threads</span>
-        <span>{navigator.hardwareConcurrency ?? "?"}</span>
+        <dt>Logical cores</dt>
+        <dd>{navigator.hardwareConcurrency ?? "—"}</dd>
       </div>
       <div className="env-item">
-        <span className="env-label">GPU (WebGPU)</span>
-        <span>
-          {!gpuChecked ? "detecting…" : gpu ? gpu.adapterName : "not available"}
-        </span>
+        <dt>GPU adapter</dt>
+        <dd>
+          {!gpuChecked ? "Detecting…" : gpu ? gpu.adapterName : "Not available"}
+        </dd>
       </div>
       <div className="env-item">
-        <span className="env-label">Browser</span>
-        <span>{browserName()}</span>
+        <dt>Browser</dt>
+        <dd>{browserName()}</dd>
       </div>
-    </section>
+    </dl>
   );
 }

@@ -41,12 +41,14 @@ export default function App() {
     }
   };
 
-  const verdict = useMemo(() => {
+  const summary = useMemo(() => {
     const withGpu = results.filter((m) => m.speedup !== null);
     if (!withGpu.length) return null;
     const wins = withGpu.filter((m) => m.speedup! > 1.1).length;
     const speedups = withGpu.map((m) => m.speedup!).sort((a, b) => a - b);
-    const med = speedups[speedups.length >> 1];
+    const mid = speedups.length >> 1;
+    const med =
+      speedups.length % 2 ? speedups[mid] : (speedups[mid - 1] + speedups[mid]) / 2;
     const best = withGpu.reduce((a, b) => (b.speedup! > a.speedup! ? b : a));
     return { wins, total: withGpu.length, median: med, best };
   }, [results]);
@@ -83,26 +85,25 @@ export default function App() {
   return (
     <main>
       <header>
-        <h1>
-          pixel<span className="accent">bench</span>
-        </h1>
-        <p className="tagline">
-          Race your CPU against your GPU on real image-processing work — right
-          here, right now.
+        <h1>pixelbench</h1>
+        <p className="lede">
+          A CPU and GPU benchmark for image processing, run in the browser.
         </p>
-        <p className="sub">
-          CPU pass runs plain JavaScript on typed arrays. GPU pass runs{" "}
-          <strong>WebGPU compute shaders</strong>. Same pixels, same math, may
-          the best silicon win.
+        <p className="description">
+          Each operation is implemented twice: single-threaded JavaScript over
+          typed arrays on the CPU, and WebGPU compute shaders on the GPU. Both
+          implementations process the same test image with the same parameters,
+          and every GPU result is verified against the CPU output before it is
+          reported.
         </p>
       </header>
 
       <EnvCard gpu={gpu} gpuChecked={gpuChecked} />
 
       {gpuChecked && !gpu && (
-        <div className="warning">
-          ⚠️ Your browser doesn't support WebGPU, so only the CPU pass will
-          run. Try Chrome or Edge for the full race.
+        <div className="notice" role="alert">
+          WebGPU is not available in this browser, so the benchmark will run on
+          the CPU only. Chrome and Edge currently support WebGPU.
         </div>
       )}
 
@@ -117,7 +118,6 @@ export default function App() {
                 onChange={() => toggleSize(size)}
               />
               {size}
-              {size === "4K" && <span className="hint"> (slower)</span>}
             </label>
           ))}
         </fieldset>
@@ -125,13 +125,13 @@ export default function App() {
           onClick={run}
           disabled={phase === "running" || !gpuChecked || selectedSizes.length === 0}
         >
-          {phase === "running" ? "Racing…" : "▶  Run benchmark"}
+          {phase === "running" ? "Running…" : "Run benchmark"}
         </button>
       </section>
 
       {phase === "running" && (
-        <div className="status">
-          <div className="spinner" />
+        <div className="status" role="status">
+          <div className="spinner" aria-hidden="true" />
           <span>{status}</span>
         </div>
       )}
@@ -144,45 +144,53 @@ export default function App() {
         />
       ))}
 
-      {phase === "done" && verdict && (
+      {phase === "done" && summary && (
         <>
-          <div className="verdict">
-            <strong>Verdict:</strong> GPU won {verdict.wins}/{verdict.total}{" "}
-            tasks (median speedup {verdict.median.toFixed(2)}x, best{" "}
-            {verdict.best.speedup!.toFixed(2)}x on {verdict.best.label} @{" "}
-            {verdict.best.size}). Faster hardware isn't always faster — it
-            depends on the task and the image size.
-          </div>
+          <section className="summary">
+            <h2>Summary</h2>
+            <p>
+              The GPU outperformed the CPU on {summary.wins} of {summary.total}{" "}
+              measurements. Median speedup {summary.median.toFixed(2)}×; highest{" "}
+              {summary.best.speedup!.toFixed(2)}× ({summary.best.label},{" "}
+              {summary.best.size}).
+            </p>
+          </section>
           <div className="actions">
-            <button className="ghost" onClick={downloadJson}>
-              Download results (JSON)
+            <button className="secondary" onClick={downloadJson}>
+              Download JSON
             </button>
-            <button className="ghost" onClick={run}>
+            <button className="secondary" onClick={run}>
               Run again
             </button>
           </div>
         </>
       )}
 
-      {phase === "done" && !verdict && (
-        <div className="verdict">
-          CPU-only run complete. Open this page in a WebGPU-capable browser
-          (Chrome/Edge) to let your GPU fight back.
-        </div>
+      {phase === "done" && !summary && (
+        <section className="summary">
+          <h2>Summary</h2>
+          <p>
+            Benchmark complete, CPU only. A WebGPU-capable browser is required
+            for the GPU comparison.
+          </p>
+        </section>
       )}
 
       <footer>
         <p>
-          Want honest <em>native</em> numbers (OpenCV + OpenCL, no browser
-          overhead)? Get the{" "}
+          pixelbench-web measures the browser stack: JavaScript against WebGPU.
+          For native measurements with OpenCV and OpenCL, use the{" "}
           <a href="https://github.com/OkeahDavid/pixelbench">pixelbench CLI</a>.
         </p>
         <p className="fine">
-          Methodology: deterministic synthetic test image · warmup before
-          timing · median of individually timed samples · GPU timed via{" "}
-          <code>onSubmittedWorkDone</code> with batched dispatches · GPU output
-          verified against CPU output per task · transfers excluded. Built by{" "}
-          <a href="https://github.com/OkeahDavid">Okeah David</a> · MIT
+          Methodology: deterministic synthetic test image; warmup runs before
+          timing; median of individually timed samples; GPU timed with{" "}
+          <code>onSubmittedWorkDone</code> over batched dispatches; input
+          transfers excluded; GPU output verified against CPU output per
+          operation.
+        </p>
+        <p className="fine">
+          <a href="https://github.com/OkeahDavid">Okeah David</a> · MIT license
         </p>
       </footer>
     </main>
