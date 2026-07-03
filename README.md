@@ -25,8 +25,14 @@ Performance of Image Processing Tasks."*
 The `web/` folder contains **pixelbench-web** — the same comparison with no
 install: the CPU pass runs single-threaded TypeScript over typed arrays, the
 GPU pass runs **WebGPU compute shaders (WGSL)**, and every GPU result is
-verified against the CPU output before it is reported. Built with React +
-TypeScript + Vite; deploys to Netlify as a static site.
+verified against the CPU output before it is reported.
+
+- Built with React + TypeScript + Vite; React Router for pages
+  (benchmark + full methodology writeup)
+- Dark instrument-style UI: CPU/GPU comparison bars per operation,
+  JetBrains Mono numerals, summary stat panel, JSON export
+- Deploys to Netlify as a static site (`netlify.toml` handles base,
+  build, and the SPA redirect)
 
 ```bash
 cd web

@@ -2,3 +2,9 @@
   base = "web"
   command = "npm run build"
   publish = "dist"
+
+# Client-side routing: serve index.html for all paths
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
