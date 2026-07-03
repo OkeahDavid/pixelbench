@@ -44,7 +44,7 @@ export default function App() {
   const summary = useMemo(() => {
     const withGpu = results.filter((m) => m.speedup !== null);
     if (!withGpu.length) return null;
-    const wins = withGpu.filter((m) => m.speedup! > 1.1).length;
+    const wins = withGpu.filter((m) => m.speedup! > 1).length;
     const speedups = withGpu.map((m) => m.speedup!).sort((a, b) => a - b);
     const mid = speedups.length >> 1;
     const med =
@@ -85,16 +85,19 @@ export default function App() {
   return (
     <main>
       <header>
-        <h1>pixelbench</h1>
+        <div className="brand">
+          <h1>pixelbench</h1>
+          <span className="version">v0.1</span>
+        </div>
         <p className="lede">
           A CPU and GPU benchmark for image processing, run in the browser.
         </p>
         <p className="description">
           Each operation is implemented twice: single-threaded JavaScript over
-          typed arrays on the CPU, and WebGPU compute shaders on the GPU. Both
-          implementations process the same test image with the same parameters,
-          and every GPU result is verified against the CPU output before it is
-          reported.
+          typed arrays on the <span className="k-cpu">CPU</span>, and WebGPU
+          compute shaders on the <span className="k-gpu">GPU</span>. Both
+          process the same test image with the same parameters, and every GPU
+          result is verified against the CPU output before it is reported.
         </p>
       </header>
 
@@ -108,20 +111,25 @@ export default function App() {
       )}
 
       <section className="controls">
-        <fieldset disabled={phase === "running"}>
-          <legend>Image sizes</legend>
-          {Object.keys(SIZES).map((size) => (
-            <label key={size}>
-              <input
-                type="checkbox"
-                checked={selectedSizes.includes(size)}
-                onChange={() => toggleSize(size)}
-              />
-              {size}
-            </label>
-          ))}
-        </fieldset>
+        <div className="size-picker" role="group" aria-label="Image sizes">
+          <span className="control-label">Image sizes</span>
+          <div className="pills">
+            {Object.keys(SIZES).map((size) => (
+              <button
+                key={size}
+                type="button"
+                className="pill"
+                aria-pressed={selectedSizes.includes(size)}
+                disabled={phase === "running"}
+                onClick={() => toggleSize(size)}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </div>
         <button
+          className="primary"
           onClick={run}
           disabled={phase === "running" || !gpuChecked || selectedSizes.length === 0}
         >
@@ -147,13 +155,22 @@ export default function App() {
       {phase === "done" && summary && (
         <>
           <section className="summary">
-            <h2>Summary</h2>
-            <p>
-              The GPU outperformed the CPU on {summary.wins} of {summary.total}{" "}
-              measurements. Median speedup {summary.median.toFixed(2)}×; highest{" "}
-              {summary.best.speedup!.toFixed(2)}× ({summary.best.label},{" "}
-              {summary.best.size}).
-            </p>
+            <div className="stat">
+              <div className="stat-value">
+                {summary.wins}<span className="stat-dim">/{summary.total}</span>
+              </div>
+              <div className="stat-label">GPU faster</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value">{summary.median.toFixed(2)}×</div>
+              <div className="stat-label">Median speedup</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value">{summary.best.speedup!.toFixed(2)}×</div>
+              <div className="stat-label">
+                Peak — {summary.best.label}, {summary.best.size}
+              </div>
+            </div>
           </section>
           <div className="actions">
             <button className="secondary" onClick={downloadJson}>
@@ -168,8 +185,7 @@ export default function App() {
 
       {phase === "done" && !summary && (
         <section className="summary">
-          <h2>Summary</h2>
-          <p>
+          <p className="summary-plain">
             Benchmark complete, CPU only. A WebGPU-capable browser is required
             for the GPU comparison.
           </p>
