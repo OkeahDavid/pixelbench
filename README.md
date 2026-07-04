@@ -76,14 +76,24 @@ always faster — it depends on the task and image size.
 
 ## Install & run
 
+Run it without cloning anything ([uv](https://docs.astral.sh/uv/) required):
+
 ```bash
-git clone https://github.com/okeahdavid/pixelbench
-cd pixelbench
-pip install -e .
-pixelbench
+uvx --from git+https://github.com/OkeahDavid/pixelbench pixelbench
 ```
 
-Or without installing: `pip install opencv-python numpy rich && python -m pixelbench`
+Or clone and run:
+
+```bash
+git clone https://github.com/OkeahDavid/pixelbench
+cd pixelbench
+uv run pixelbench
+```
+
+To install `pixelbench` as a permanent command: `uv tool install .`
+
+No uv? pip works too: `pip install -e .` then `pixelbench`, or
+`pip install opencv-python numpy rich` and `python -m pixelbench`.
 
 ### Options
 
