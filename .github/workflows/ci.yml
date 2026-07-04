@@ -22,7 +22,24 @@ jobs:
         run: uv sync
 
       - name: Run unit and integration tests
-        run: uv run pytest -q
+        run: |
+          set -o pipefail
+          uv run pytest --cov=pixelbench -q | tee /tmp/pytest.out
+
+      - name: Write test summary
+        if: always()
+        run: |
+          {
+            echo "## CLI tests"
+            echo ""
+            echo '```'
+            tail -n 1 /tmp/pytest.out
+            echo '```'
+            echo ""
+            echo "### Coverage"
+            echo ""
+            uv run coverage report --format=markdown
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run benchmark (CPU-only smoke test)
         run: uv run pixelbench --sizes 720p --tasks grayscale,threshold,canny --iterations 3 --no-gpu
@@ -50,8 +67,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run unit tests
-        run: npm test
+      - name: Run unit tests with coverage
+        run: |
+          set -o pipefail
+          npm test -- --coverage --coverage.reporter=text | tee /tmp/vitest.out
+
+      - name: Write test summary
+        if: always()
+        run: |
+          {
+            echo "## Web tests"
+            echo ""
+            echo '```'
+            grep -E "^ *(Test Files|Tests) " /tmp/vitest.out
+            echo '```'
+            echo ""
+            echo "### Coverage"
+            echo ""
+            echo '```'
+            sed -n '/% Coverage report/,$p' /tmp/vitest.out | grep -v '^=*$'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Type-check and build
         run: npm run build

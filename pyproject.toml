@@ -4,7 +4,8 @@ version = "0.2.0"
 description = "Speedtest for your CPU vs GPU — find out if GPU acceleration is actually worth it on your machine."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Okeah David Chidugam" }]
 keywords = ["benchmark", "opencv", "gpu", "opencl", "image-processing"]
 dependencies = [
@@ -20,10 +21,13 @@ charts = ["matplotlib>=3.7"]
 pixelbench = "pixelbench.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8"]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=7.1.0",
+]
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
