@@ -17,36 +17,56 @@ def print_report(result: BenchmarkResult, console: Console | None = None) -> Non
     console = console or Console()
     sys = result.system
 
+    has_cuda = any(m.cuda_ms is not None or m.cuda_error for m in result.measurements)
+    gpu_label = "OpenCL" if has_cuda else "GPU"
+
     console.print()
     console.print(
         f"[bold]CPU:[/bold] {sys['cpu']} ({sys['cores']} threads)   "
         f"[bold]GPU:[/bold] {sys['gpu']}"
         + (f" [{sys['gpu_type']}]" if sys.get("gpu_type") else "")
+        + (f"   [bold]CUDA:[/bold] {sys['cuda_device']}" if sys.get("cuda_device") else "")
     )
     console.print(
         f"[dim]{sys['os']} · Python {sys['python']} · OpenCV {sys['opencv']} · "
         f"median of {result.iterations} runs, {result.warmup} warmup[/dim]\n"
     )
 
+    def speed_cell(s: float | None) -> str:
+        if s is None:
+            return "—"
+        color = "green" if s >= 1.1 else "red" if s <= 0.9 else "yellow"
+        return f"[{color}]{s:.2f}x[/{color}]"
+
     sizes = list(dict.fromkeys(m.size for m in result.measurements))
     for size in sizes:
         table = Table(title=f"[bold]{size}[/bold]", title_justify="left")
         table.add_column("Task")
         table.add_column("CPU (ms)", justify="right")
-        table.add_column("GPU (ms)", justify="right")
-        table.add_column("GPU speedup", justify="right")
+        table.add_column(f"{gpu_label} (ms)", justify="right")
+        table.add_column(f"{gpu_label} speedup", justify="right")
+        if has_cuda:
+            table.add_column("CUDA (ms)", justify="right")
+            table.add_column("CUDA speedup", justify="right")
 
         for m in (m for m in result.measurements if m.size == size):
             if m.gpu_error:
-                gpu_cell, speed_cell = "[dim]unsupported[/dim]", "—"
+                gpu_cell, gpu_speed = "[dim]unsupported[/dim]", "—"
             elif m.gpu_ms is None:
-                gpu_cell, speed_cell = "[dim]n/a[/dim]", "—"
+                gpu_cell, gpu_speed = "[dim]n/a[/dim]", "—"
             else:
                 gpu_cell = f"{m.gpu_ms:.2f}"
-                s = m.speedup
-                color = "green" if s >= 1.1 else "red" if s <= 0.9 else "yellow"
-                speed_cell = f"[{color}]{s:.2f}x[/{color}]"
-            table.add_row(m.label, f"{m.cpu_ms:.2f}", gpu_cell, speed_cell)
+                gpu_speed = speed_cell(m.speedup)
+
+            row = [m.label, f"{m.cpu_ms:.2f}", gpu_cell, gpu_speed]
+            if has_cuda:
+                if m.cuda_error:
+                    row += ["[dim]unsupported[/dim]", "—"]
+                elif m.cuda_ms is None:
+                    row += ["[dim]n/a[/dim]", "—"]
+                else:
+                    row += [f"{m.cuda_ms:.2f}", speed_cell(m.cuda_speedup)]
+            table.add_row(*row)
 
         console.print(table)
         console.print()
@@ -76,6 +96,9 @@ def to_dict(result: BenchmarkResult) -> dict:
                 "gpu_ms": m.gpu_ms,
                 "speedup": round(m.speedup, 3) if m.speedup else None,
                 "gpu_error": m.gpu_error,
+                "cuda_ms": m.cuda_ms,
+                "cuda_speedup": round(m.cuda_speedup, 3) if m.cuda_speedup else None,
+                "cuda_error": m.cuda_error,
             }
             for m in result.measurements
         ],

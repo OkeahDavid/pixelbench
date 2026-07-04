@@ -137,8 +137,10 @@ across all tasks and sizes.
 
 ## Roadmap
 
+- [x] CUDA backend — detected automatically on CUDA-enabled OpenCV builds
+      with an NVIDIA GPU; adds a third comparison column (CPU vs OpenCL vs
+      CUDA). The standard `opencv-python` wheel does not include CUDA.
 - [ ] Transfer-inclusive timing mode (`--include-transfer`)
-- [ ] CUDA backend for `opencv-contrib` builds
 - [ ] Speedup charts (`--chart`, matplotlib)
 - [ ] Hosted leaderboard with auto-submit
 

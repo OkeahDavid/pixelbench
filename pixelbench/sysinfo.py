@@ -67,7 +67,10 @@ def opencl_device() -> dict:
 
 def collect() -> dict:
     """Gather everything worth recording alongside benchmark numbers."""
+    from . import cuda_tasks
+
     ocl = opencl_device()
+    cuda = cuda_tasks.available()
     return {
         "cpu": _cpu_name(),
         "cores": os.cpu_count(),
@@ -75,6 +78,8 @@ def collect() -> dict:
         "gpu_vendor": ocl["vendor"],
         "gpu_type": ocl["type"],
         "opencl": ocl["available"],
+        "cuda": cuda,
+        "cuda_device": cuda_tasks.device_name() if cuda else None,
         "os": f"{platform.system()} {platform.release()}",
         "python": sys.version.split()[0],
         "opencv": cv2.__version__,

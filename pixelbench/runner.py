@@ -29,11 +29,19 @@ class Measurement:
     cpu_ms: float | None = None
     gpu_ms: float | None = None
     gpu_error: str | None = None
+    cuda_ms: float | None = None
+    cuda_error: str | None = None
 
     @property
     def speedup(self) -> float | None:
         if self.cpu_ms and self.gpu_ms:
             return self.cpu_ms / self.gpu_ms
+        return None
+
+    @property
+    def cuda_speedup(self) -> float | None:
+        if self.cpu_ms and self.cuda_ms:
+            return self.cpu_ms / self.cuda_ms
         return None
 
 
@@ -70,12 +78,13 @@ def run(
     progress=None,
 ) -> BenchmarkResult:
     """Run the benchmark suite. `progress` is an optional callback(str)."""
-    from . import sysinfo
+    from . import cuda_tasks, sysinfo
 
     system = sysinfo.collect()
     gpu_ok = use_gpu and system["opencl"]
     if gpu_ok:
         cv2.ocl.setUseOpenCL(True)
+    cuda_ok = use_gpu and system["cuda"]
 
     result = BenchmarkResult(system=system, iterations=iterations, warmup=warmup)
 
@@ -86,6 +95,11 @@ def run(
         inputs_cpu = {"color": color, "gray": gray}
         inputs_gpu = (
             {"color": cv2.UMat(color), "gray": cv2.UMat(gray)} if gpu_ok else {}
+        )
+        inputs_cuda = (
+            {"color": cuda_tasks.upload(color), "gray": cuda_tasks.upload(gray)}
+            if cuda_ok
+            else {}
         )
 
         for task_name in tasks:
@@ -105,6 +119,19 @@ def run(
                     )
                 except cv2.error as e:
                     m.gpu_error = str(e).splitlines()[0][:120]
+
+            if cuda_ok:
+                try:
+                    fn = cuda_tasks.make(
+                        task.name, inputs_cuda["color"], inputs_cuda["gray"]
+                    )
+                    m.cuda_ms = _time_op(
+                        lambda _: fn(), None, iterations, warmup, sync=False
+                    )
+                except cuda_tasks.UnsupportedTask as e:
+                    m.cuda_error = str(e)
+                except cv2.error as e:
+                    m.cuda_error = str(e).splitlines()[0][:120]
 
             result.measurements.append(m)
 
