@@ -2,6 +2,8 @@
 
 **Is your GPU actually faster than your CPU? Stop guessing — measure it.**
 
+**Live: [pixelbench.netlify.app](https://pixelbench.netlify.app)**
+
 pixelbench runs identical image-processing workloads (blur, threshold, edge
 detection, and more) on your CPU and your GPU, then shows you exactly where the
 GPU wins and where it embarrassingly loses. No CUDA required — it uses OpenCV's
@@ -22,7 +24,8 @@ Performance of Image Processing Tasks."*
 
 ## Try it in your browser
 
-The `web/` folder contains **pixelbench-web** — the same comparison with no
+**[pixelbench.netlify.app](https://pixelbench.netlify.app)** — the `web/`
+folder contains **pixelbench-web**, the same comparison with no
 install: the CPU pass runs single-threaded TypeScript over typed arrays, the
 GPU pass runs **WebGPU compute shaders (WGSL)**, and every GPU result is
 verified against the CPU output before it is reported.
