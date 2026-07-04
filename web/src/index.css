@@ -58,8 +58,12 @@ body {
   color: var(--text);
   text-decoration: none;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.6rem;
+}
+
+.nav-logo {
+  flex-shrink: 0;
 }
 
 .version {
