@@ -68,6 +68,8 @@ jobs:
         run: npm ci
 
       - name: Run unit tests with coverage
+        env:
+          NO_COLOR: "1"
         run: |
           set -o pipefail
           npm test -- --coverage --coverage.reporter=text | tee /tmp/vitest.out
@@ -75,17 +77,19 @@ jobs:
       - name: Write test summary
         if: always()
         run: |
+          # Strip any remaining ANSI escapes before extracting lines
+          sed -r 's/\x1b\[[0-9;]*m//g' /tmp/vitest.out > /tmp/vitest.txt || true
           {
             echo "## Web tests"
             echo ""
             echo '```'
-            grep -E "^ *(Test Files|Tests) " /tmp/vitest.out
+            grep -E "Test Files|Tests " /tmp/vitest.txt || echo "(test counts not found)"
             echo '```'
             echo ""
             echo "### Coverage"
             echo ""
             echo '```'
-            sed -n '/% Coverage report/,$p' /tmp/vitest.out | grep -v '^=*$'
+            sed -n '/% Coverage report/,$p' /tmp/vitest.txt | grep -v '^=*$' || echo "(coverage table not found)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
