@@ -1,5 +1,12 @@
 # pixelbench
 
+[![PyPI](https://img.shields.io/pypi/v/pixelbench)](https://pypi.org/project/pixelbench/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://pypi.org/project/pixelbench/)
+[![Tests](https://img.shields.io/github/actions/workflow/status/OkeahDavid/pixelbench/ci.yml?branch=main&label=tests)](https://github.com/OkeahDavid/pixelbench/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/OkeahDavid/pixelbench)](https://github.com/OkeahDavid/pixelbench/blob/main/LICENSE)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fpixelbench.netlify.app&label=pixelbench.netlify.app)](https://pixelbench.netlify.app/)
+[![GitHub stars](https://img.shields.io/github/stars/OkeahDavid/pixelbench?style=social)](https://github.com/OkeahDavid/pixelbench/stargazers)
+
 **Speedtest for your CPU vs GPU — find out if GPU acceleration is actually
 worth it on your machine.**
 
