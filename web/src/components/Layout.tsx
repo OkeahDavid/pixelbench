@@ -32,7 +32,10 @@ export function Layout() {
           <a href="https://github.com/OkeahDavid/pixelbench">pixelbench CLI</a>.
         </p>
         <p className="fine">
-          <a href="https://github.com/OkeahDavid">Okeah David</a> · MIT license
+          <a href="https://github.com/OkeahDavid">Okeah David</a> ·{" "}
+          <a href="https://github.com/OkeahDavid/pixelbench/blob/main/LICENSE">
+            MIT license
+          </a>
         </p>
       </footer>
     </div>
