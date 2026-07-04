@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # setuptools-scm derives the version from git tags
+          fetch-depth: 0
 
       - uses: astral-sh/setup-uv@v8.2.0
 

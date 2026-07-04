@@ -3,6 +3,8 @@ name: Publish to PyPI
 # Publishes when a version tag (v0.2.0, v1.0.0, ...) is pushed — including
 # the tag created by publishing a GitHub release. Tag pushes are push events,
 # so the run shows as a check on the tagged commit.
+# The package version is derived from the tag by setuptools-scm, so the tag
+# is the single source of truth — no version bump commits needed.
 # Uses PyPI trusted publishing (OIDC) — no API token stored in the repo.
 
 on:
@@ -20,20 +22,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          # setuptools-scm derives the version from git tags
+          fetch-depth: 0
 
       - uses: astral-sh/setup-uv@v8.2.0
 
-      - name: Check release tag matches package version
-        run: |
-          TAG="${GITHUB_REF_NAME#v}"
-          VERSION="$(python3 -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")"
-          if [ "$TAG" != "$VERSION" ]; then
-            echo "Release tag v$TAG does not match pyproject.toml version $VERSION" >&2
-            exit 1
-          fi
-
       - name: Build sdist and wheel
-        run: uv build
+        run: |
+          uv build
+          echo "Built artifacts:" && ls -1 dist/
 
       - name: Publish to PyPI
         run: uv publish --trusted-publishing always

@@ -1,6 +1,6 @@
 [project]
 name = "pixelbench"
-version = "0.2.1"
+dynamic = ["version"]
 description = "Speedtest for your CPU vs GPU — find out if GPU acceleration is actually worth it on your machine."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,11 +27,16 @@ dev = [
 ]
 
 [build-system]
-requires = ["setuptools>=77"]
+requires = ["setuptools>=77", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["pixelbench"]
+
+# Version comes from the git tag (v0.2.1 -> 0.2.1). Between releases,
+# builds get dev versions like 0.2.2.dev3+g1a2b3c.
+[tool.setuptools_scm]
+fallback_version = "0.0.0"
 
 [tool.uv]
 package = true
