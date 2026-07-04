@@ -5,7 +5,7 @@ export function Layout() {
     <div className="shell">
       <nav className="nav">
         <NavLink to="/" className="nav-brand">
-          pixelbench<span className="version">v0.1</span>
+          pixelbench<span className="version">v0.2.1</span>
         </NavLink>
         <div className="nav-links">
           <NavLink to="/" end>

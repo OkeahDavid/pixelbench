@@ -56,7 +56,7 @@ export function About() {
       <section>
         <h2>The author</h2>
         <p>
-          I&rsquo;m Okeah David Chidugam, a computer engineering graduate who
+          I&rsquo;m David Okeah, a Software Engineer who
           builds software across the stack — web applications, machine
           learning systems, and developer tools. More of my work is on{" "}
           <a href="https://github.com/OkeahDavid">GitHub</a>.

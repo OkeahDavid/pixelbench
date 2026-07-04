@@ -3,8 +3,6 @@
 **Speedtest for your CPU vs GPU — find out if GPU acceleration is actually
 worth it on your machine.**
 
-**Live: [pixelbench.netlify.app](https://pixelbench.netlify.app)**
-
 pixelbench runs identical image-processing workloads (blur, threshold, edge
 detection, and more) on your CPU and your GPU, then shows you exactly where the
 GPU wins and where it embarrassingly loses. No CUDA required — it uses OpenCV's
