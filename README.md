@@ -146,4 +146,5 @@ across all tasks and sizes.
 
 ## License
 
-MIT © Okeah David Chidugam
+This project is licensed under the MIT License — see the [LICENSE](LICENSE)
+file for details.
