@@ -578,6 +578,24 @@ code {
 /* Small screens */
 
 @media (max-width: 560px) {
+  .shell {
+    padding: 0 1.125rem 4rem;
+  }
+
+  /* Stack the nav: brand on its own row, links wrapping below */
+  .nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.875rem;
+    padding: 1.125rem 0 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .nav-links {
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
   .row {
     grid-template-columns: 1fr 4rem;
   }
@@ -585,5 +603,21 @@ code {
   .row-label {
     grid-column: 1 / -1;
     margin-bottom: 0.125rem;
+  }
+
+  /* Environment strip: stack cells instead of forcing them side by side */
+  .env-item {
+    flex-basis: 100%;
+  }
+
+  .env-item + .env-item {
+    border-left: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* Summary stats: same stacking treatment as the env strip */
+  .stat + .stat {
+    border-left: none;
+    border-top: 1px solid var(--rule);
   }
 }
