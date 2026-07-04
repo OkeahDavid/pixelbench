@@ -1,6 +1,7 @@
 # pixelbench
 
-**Is your GPU actually faster than your CPU? Stop guessing — measure it.**
+**Speedtest for your CPU vs GPU — find out if GPU acceleration is actually
+worth it on your machine.**
 
 **Live: [pixelbench.netlify.app](https://pixelbench.netlify.app)**
 
