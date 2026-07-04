@@ -5,7 +5,7 @@ export function Layout() {
     <div className="shell">
       <nav className="nav">
         <NavLink to="/" className="nav-brand">
-          pixelbench<span className="version">v0.2.1</span>
+          pixelbench<span className="version">v{__APP_VERSION__}</span>
         </NavLink>
         <div className="nav-links">
           <NavLink to="/" end>
@@ -29,7 +29,10 @@ export function Layout() {
         <p className="fine">
           pixelbench-web measures the browser stack: JavaScript against WebGPU.
           For native measurements with OpenCV and OpenCL, use the{" "}
-          <a href="https://github.com/OkeahDavid/pixelbench">pixelbench CLI</a>.
+          <a href="https://github.com/OkeahDavid/pixelbench">pixelbench CLI</a>,
+          available on{" "}
+          <a href="https://pypi.org/project/pixelbench/">PyPI</a> (
+          <code>uvx pixelbench</code>).
         </p>
         <p className="fine">
           <a href="https://github.com/OkeahDavid">Okeah David</a> ·{" "}

@@ -1,6 +1,8 @@
 [build]
   base = "web"
-  command = "npm run build"
+  # Netlify clones shallowly; fetch tags first so the build can derive
+  # the displayed version from the latest git tag (see vite.config.ts).
+  command = "git fetch --tags --quiet || true; npm run build"
   publish = "dist"
 
 # Client-side routing: serve index.html for all paths

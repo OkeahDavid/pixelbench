@@ -37,7 +37,9 @@ export function About() {
             </a>{" "}
             that benchmarks native performance with OpenCV, comparing the CPU
             against the GPU through OpenCL — no CUDA required, so it runs on
-            integrated graphics too; and
+            integrated graphics too. Published on{" "}
+            <a href="https://pypi.org/project/pixelbench/">PyPI</a> (
+            <code>uvx pixelbench</code>); and
           </li>
           <li>
             this site, which runs the same comparison in the browser:
