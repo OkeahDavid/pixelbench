@@ -12,6 +12,7 @@ export function Layout() {
             Benchmark
           </NavLink>
           <NavLink to="/methodology">Methodology</NavLink>
+          <NavLink to="/about">About</NavLink>
           <a
             href="https://github.com/OkeahDavid/pixelbench"
             target="_blank"
