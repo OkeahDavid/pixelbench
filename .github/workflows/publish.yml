@@ -1,11 +1,14 @@
 name: Publish to PyPI
 
-# Publishes only when a GitHub release is published (tag like v0.2.0).
+# Publishes when a version tag (v0.2.0, v1.0.0, ...) is pushed — including
+# the tag created by publishing a GitHub release. Tag pushes are push events,
+# so the run shows as a check on the tagged commit.
 # Uses PyPI trusted publishing (OIDC) — no API token stored in the repo.
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
   publish:
