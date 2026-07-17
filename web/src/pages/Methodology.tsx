@@ -151,6 +151,12 @@ export function Methodology() {
             Browsers deliberately mask the exact GPU adapter name, so the
             reported adapter may be generic.
           </li>
+          <li>
+            On hybrid machines (integrated plus discrete GPU), pixelbench
+            requests the high-performance adapter by default and shows a
+            selector when the browser exposes both. The browser and operating
+            system may still override which GPU actually runs the work.
+          </li>
         </ul>
       </section>
 

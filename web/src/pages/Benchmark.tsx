@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { initGPU, type GpuContext } from "../bench/gpu";
+import {
+  detectAdapterOptions,
+  initGPU,
+  type AdapterOption,
+  type GpuContext,
+  type GpuPreference,
+} from "../bench/gpu";
 import { runBenchmark, type Measurement } from "../bench/runner";
 import { SIZES } from "../bench/image";
 import { EnvCard } from "../components/EnvCard";
@@ -11,17 +17,38 @@ type Phase = "idle" | "running" | "done";
 export function Benchmark() {
   const [gpu, setGpu] = useState<GpuContext | null>(null);
   const [gpuChecked, setGpuChecked] = useState(false);
+  const [adapterOptions, setAdapterOptions] = useState<AdapterOption[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>(["720p", "1080p"]);
   const [phase, setPhase] = useState<Phase>("idle");
   const [status, setStatus] = useState("");
   const [results, setResults] = useState<Measurement[]>([]);
 
   useEffect(() => {
-    initGPU().then((ctx) => {
+    let cancelled = false;
+    (async () => {
+      const options = await detectAdapterOptions();
+      const ctx = await initGPU(options[0]?.preference ?? "high-performance");
+      if (cancelled) {
+        ctx?.device.destroy();
+        return;
+      }
+      setAdapterOptions(options);
       setGpu(ctx);
       setGpuChecked(true);
-    });
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const selectGpu = async (preference: GpuPreference) => {
+    if (phase === "running" || gpu?.preference === preference) return;
+    setGpuChecked(false);
+    gpu?.device.destroy();
+    const ctx = await initGPU(preference);
+    setGpu(ctx);
+    setGpuChecked(true);
+  };
 
   const toggleSize = (size: string) =>
     setSelectedSizes((prev) =>
@@ -62,6 +89,7 @@ export function Benchmark() {
             pixelbench_web: "0.1.0",
             timestamp: new Date().toISOString(),
             gpu: gpu?.adapterName ?? null,
+            gpuPreference: gpu?.preference ?? null,
             cpuThreads: navigator.hardwareConcurrency,
             userAgent: navigator.userAgent,
             results,
@@ -126,6 +154,26 @@ export function Benchmark() {
             ))}
           </div>
         </div>
+        {adapterOptions.length > 1 && (
+          <div className="size-picker" role="group" aria-label="GPU adapter">
+            <span className="control-label">GPU</span>
+            <div className="pills">
+              {adapterOptions.map((option) => (
+                <button
+                  key={option.preference}
+                  type="button"
+                  className="pill"
+                  aria-pressed={gpu?.preference === option.preference}
+                  disabled={phase === "running" || !gpuChecked}
+                  title={option.preference}
+                  onClick={() => selectGpu(option.preference)}
+                >
+                  {option.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <button
           className="primary"
           onClick={run}

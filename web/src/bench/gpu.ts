@@ -99,25 +99,68 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
   dst[i] = min(255.0, sqrt(gx*gx + gy*gy));
 }`;
 
+export type GpuPreference = "high-performance" | "low-power";
+
 export type GpuContext = {
   device: GPUDevice;
   adapterName: string;
+  preference: GpuPreference;
 };
 
-export async function initGPU(): Promise<GpuContext | null> {
+function adapterLabel(info: GPUAdapterInfo | undefined): string {
+  return (
+    [info?.description, info?.device, info?.vendor, info?.architecture].find(
+      (s) => s && s.length > 2
+    ) ?? "GPU (name withheld by browser)"
+  );
+}
+
+// Benchmarks should measure the capable GPU by default: without a
+// powerPreference, hybrid laptops (integrated + discrete) hand back the
+// power-saving adapter and the discrete card never wakes up.
+export async function initGPU(
+  preference: GpuPreference = "high-performance"
+): Promise<GpuContext | null> {
   if (!("gpu" in navigator)) return null;
   try {
-    const adapter = await navigator.gpu.requestAdapter();
+    const adapter = await navigator.gpu.requestAdapter({
+      powerPreference: preference,
+    });
     if (!adapter) return null;
     const device = await adapter.requestDevice();
-    const info = adapter.info;
-    const adapterName =
-      [info?.description, info?.device, info?.vendor, info?.architecture]
-        .find((s) => s && s.length > 2) ?? "GPU (name withheld by browser)";
-    return { device, adapterName };
+    return { device, adapterName: adapterLabel(adapter.info), preference };
   } catch {
     return null;
   }
+}
+
+export type AdapterOption = { preference: GpuPreference; name: string };
+
+/**
+ * Probe both power preferences. On hybrid machines the browser exposes two
+ * distinct adapters; on single-GPU machines both probes return the same one
+ * (collapsed to a single option). Names are whatever the browser is willing
+ * to reveal, so two genuinely different GPUs with identically masked names
+ * are treated as one — acceptable, since the user couldn't tell them apart
+ * in the UI either.
+ */
+export async function detectAdapterOptions(): Promise<AdapterOption[]> {
+  if (!("gpu" in navigator)) return [];
+  const options: AdapterOption[] = [];
+  for (const preference of ["high-performance", "low-power"] as GpuPreference[]) {
+    try {
+      const adapter = await navigator.gpu.requestAdapter({
+        powerPreference: preference,
+      });
+      if (adapter) options.push({ preference, name: adapterLabel(adapter.info) });
+    } catch {
+      /* probe failure = option unavailable */
+    }
+  }
+  if (options.length === 2 && options[0].name === options[1].name) {
+    return [options[0]];
+  }
+  return options;
 }
 
 type Pass = { pipeline: GPUComputePipeline; bindGroup: GPUBindGroup };
